@@ -16,6 +16,16 @@ type AuthConfig struct {
 	Auth         Auth               `json:"gads.Auth"`
 }
 
+func NewCredentialsFromCode(ctx context.Context, customerId string, developerToken string, userAgent string, token *oauth2.Token) (ac AuthConfig, err error) {
+	ac.Auth.CustomerId = customerId
+	ac.Auth.DeveloperToken = developerToken
+	ac.Auth.UserAgent = userAgent
+
+	ac.Auth.Client = oauth2.NewClient(ctx, oauth2.StaticTokenSource(token))
+
+	return ac, err
+}
+
 func NewCredentialsFromFile(pathToFile string, ctx context.Context) (ac AuthConfig, err error) {
 	data, err := ioutil.ReadFile(pathToFile)
 	if err != nil {
@@ -37,6 +47,10 @@ func NewCredentials(ctx context.Context) (ac AuthConfig, err error) {
 // Save writes the contents of AuthConfig back to the JSON file it was
 // loaded from.
 func (c AuthConfig) Save() error {
+	if c.file == "" {
+		return nil
+	}
+
 	configData, err := json.MarshalIndent(&c, "", "    ")
 	if err != nil {
 		return err
