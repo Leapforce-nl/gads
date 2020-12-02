@@ -1,4 +1,4 @@
-module github.com/Leapforce-nl/gads
+module github.com/leapforce-libraries/gads
 
 go 1.13
 
